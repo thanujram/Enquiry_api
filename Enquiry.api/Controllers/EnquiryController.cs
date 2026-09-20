@@ -1,9 +1,11 @@
+using Enquiry.api.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Enquiry.api.Models;
 
 [Route("api/[controller]")]
 [ApiController]
+[EnableCors("AllowAngular")]
 public class EnquiryController : ControllerBase
 {
     private readonly EnquiryDbContext _context;
@@ -13,10 +15,32 @@ public class EnquiryController : ControllerBase
     }
 
     // GET: api/EnquiryMaster
+    //[HttpGet]
+    //public async Task<ActionResult<IEnumerable<EnquiryMaster>>> GetEnquiryMaster()
+    //{
+    //    return await _context.EnquiryMasters.ToListAsync();
+    //}
+
+
+    // GET: api/EnquiryMaster
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<EnquiryMaster>>> GetEnquiryMaster()
-    {
-        return await _context.EnquiryMasters.ToListAsync();
+    public async Task<ActionResult<IEnumerable<object>>> GetEnquiryMaster() { 
+   
+        var result = await (from enquiry in _context.EnquiryMasters
+                            join service in _context.Services
+                            on enquiry.ServiceId equals service.ServiceId
+                            select new {
+                                enquiry.EnquiryId,
+                                enquiry.CustomerName,
+                                enquiry.MobileNo,
+                                enquiry.City,
+                                enquiry.EnquiryDate,
+                                enquiry.Status,
+                                enquiry.Message,
+                                service.ServiceName,
+                                service.Rate
+                            }).ToListAsync();
+        return Ok(result);
     }
 
     // GET: api/EnquiryMaster/5

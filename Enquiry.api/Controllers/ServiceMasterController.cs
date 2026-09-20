@@ -1,4 +1,5 @@
 ﻿using Enquiry.api.Models;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,6 +7,7 @@ namespace Enquiry.api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors("AllowAngular")]
     public class ServiceMasterController : ControllerBase
     {
         private readonly EnquiryDbContext _context;
